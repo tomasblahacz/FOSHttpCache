@@ -23,10 +23,15 @@ class ProxyResponseException extends \RuntimeException implements HttpCacheExcep
      */
     public static function proxyResponse(HttpException $exception)
     {
+        $request = $exception->getRequest();
         $message = sprintf(
-            '%s error response "%s" from caching proxy',
+            '%s error response "%s" from caching proxy. Request path: %s, query: %s, method %s, contents: %s.',
             $exception->getResponse()->getStatusCode(),
-            $exception->getResponse()->getReasonPhrase()
+            $exception->getResponse()->getReasonPhrase(),
+            $request->getUri()->getPath(),
+            $request->getUri()->getQuery(),
+            $request->getMethod(),
+            $request->getBody()->getContents()
         );
 
         return new self($message, 0, $exception);
